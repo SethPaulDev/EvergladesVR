@@ -1,9 +1,13 @@
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
 
 public class VRRaycastInteraction : MonoBehaviour
 {
+    private Transform highlight;
+    private Transform selection;
     public XRController controller;
     public LineRenderer lineRenderer;
     public float rayLength = 10f;
@@ -56,8 +60,22 @@ public class VRRaycastInteraction : MonoBehaviour
         if (Physics.Raycast(rayOrigin, rayDirection, out hit, rayLength, interactableLayer))
         {
             currentObject = hit.collider.gameObject;
+            Debug.Log("Object hit: " + hit.collider.gameObject.name);
             lineRenderer.material.color = Color.green; // Change color to indicate hit
             isRayActive = true; // Ray is hitting an object
+
+            highlight = hit.transform;
+                if (highlight.gameObject.GetComponent<Outline>() != null)
+                {
+                    highlight.gameObject.GetComponent<Outline>().enabled = true;
+                }
+                else
+                {
+                    Outline outline = highlight.gameObject.AddComponent<Outline>();
+                    outline.enabled = true;
+                    highlight.gameObject.GetComponent<Outline>().OutlineColor = Color.magenta;
+                    highlight.gameObject.GetComponent<Outline>().OutlineWidth = 7.0f;
+                }
         }
         else
         {
